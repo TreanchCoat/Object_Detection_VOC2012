@@ -1,0 +1,12 @@
+ultralytics>=8.3
+pyyaml
+pillow
+onnxruntime
+fastapi>=0.100.0
+uvicorn>=0.22.0
+gradio>=4.0.0
+ultralytics>=8.0.0
+opencv-python-headless>=4.5.0
+numpy>=1.20.0
+Pillow>=9.0.0
+requests>=2.25.0

@@ -1,0 +1,66 @@
+# Baseline B: instance segmentation on PASCAL VOC 2012 (Segmentation splits), NO augmentation.
+# Any value can be overridden from the CLI:  --set train.epochs=1 --set train.fraction=0.02
+
+run:
+  name: voc12_multiple_aug_50epoch_s # run id = <name>_<timestamp>
+  project: runs                  # output root (relative to where you launch train.py)
+  seed: 0
+  strict_no_aug: false            # abort if any augmentation resolves to a non-zero value
+
+data:
+  task: segment                         # detect | segment
+  voc_root: S:/Upgaming/VOCtrainval_11-May-2012/VOCdevkit         # folder that contains VOC2012/
+  yolo_root: datasets/voc2012_seg       # converted dataset is written here
+  imageset: Segmentation                # only ~1.4k train / ~1.4k val images have masks
+  min_contour_area: 16                  # px^2, drops tiny polygon fragments
+  train_split: train
+  val_split: val
+  keep_difficult: false                 # false = drop objects flagged difficult (Ultralytics VOC convention)
+
+model:
+  # *.pt  -> start from pretrained (COCO) weights
+  # *.yaml -> train from scratch, e.g. yolo11n-seg.yaml
+  weights: yolo11s-seg.pt
+
+train:
+  epochs: 50
+  imgsz: 640
+  batch: 16
+  optimizer: SGD          # explicit: "auto" would silently override lr0/momentum
+  lr0: 0.01
+  lrf: 0.01
+  momentum: 0.937
+  weight_decay: 0.0005
+  warmup_epochs: 3.0
+  cos_lr: false
+  box: 7.5
+  cls: 0.5
+  dfl: 1.5
+  patience: 20
+  workers: 4
+  device: "0"              # "" = auto, or 0 / "cpu" / "mps"
+  deterministic: true
+  amp: true
+  cache: false
+  fraction: 1.0           # fraction of the train set to use (handy for smoke tests)
+  close_mosaic: 0
+  plots: true
+  save_period: -1
+
+# Everything augmentation-related, pinned to off. (Resize/letterbox to imgsz is not augmentation.)
+augmentation:
+  hsv_h: 0.7
+  hsv_s: 0.015
+  hsv_v: 0.4
+  degrees: 0.0
+  translate: 0.1
+  scale: 0.0
+  shear: 0.0
+  perspective: 0.0
+  flipud: 0.0
+  fliplr: 0.0
+  bgr: 0.0
+  mosaic: 0.0
+  mixup: 0.0
+  copy_paste: 0.0
+  erasing: 0.0
